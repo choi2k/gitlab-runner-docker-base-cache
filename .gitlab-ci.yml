@@ -1,0 +1,31 @@
+# stages - define build stages
+stages:
+  - install
+  - test
+
+# jobs - define the job behavior
+## Install session
+install:
+  stage: install
+  before_script:
+    - docker login -u {username} -p {password} {docker-hub-domain}
+  services:
+    - docker:dind
+  script:
+    - echo cache key\:$CI_PROJECT_NAME
+    - if git diff HEAD~ --name-only|grep 'package.json\|yarn.lock'; then
+    -   docker build --no-cache --rm -t {docker-hub-domain}/$CI_PROJECT_NAME:lab .
+    -   docker push {docker-hub-domain}/$CI_PROJECT_NAME:lab
+    - fi
+  tags:
+    - docker-build
+
+## Test session
+test:
+  stage: test
+  image: {docker-hub-domain}/$CI_PROJECT_NAME:lab
+  script:
+    - ln -s /node_modules ./node_modules
+    - yarn test
+  tags:
+    - node

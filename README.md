@@ -1,0 +1,3 @@
+It aims to create cache in `GitLab` runner in the `install` stage such that the cache can be shared between different jobs and different runner when `concurrent` larger than 1 in gitlab runner config. [Detail](https://gitlab.com/gitlab-org/gitlab-runner/issues/1151) 
+
+Besides, it will speed up the building process since the extract from cache (i.e. the cache has been archieved in gitlab runner) process has been skipped by using docker image. 
